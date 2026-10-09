@@ -9,14 +9,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 // ================= 1. FIREBASE CONFIG ================= //
-const firebaseConfig = {
-  apiKey: "AIzaSyCLcsIXF1gTG4VzfCL6UjPzSE15XCRM-KI",
-  authDomain: "saveanything-storage.firebaseapp.com",
-  projectId: "saveanything-storage",
-  storageBucket: "saveanything-storage.firebasestorage.app",
-  messagingSenderId: "203505194678",
-  appId: "1:203505194678:web:f423fa8e883afa29b0b817"
-};
+import { firebaseConfig } from "./config.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
