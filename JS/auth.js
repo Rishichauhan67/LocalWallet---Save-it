@@ -108,6 +108,82 @@ async function checkEmailSignIn() {
   }
 }
 
+// ================= NAVBAR & POPUP CONTROLLER ================= //
+const authNavButtons = document.getElementById("authNavButtons");
+const userNavProfile = document.getElementById("userNavProfile");
+const userEmailBadge = document.getElementById("userEmailBadge");
+const logoutBtn = document.getElementById("logoutBtn");
+
+const toastEl = document.getElementById("loginToast");
+const toastMsg = document.getElementById("toastMessage");
+const loginToast =
+  toastEl && window.bootstrap
+    ? new bootstrap.Toast(toastEl, { delay: 4000 })
+    : null;
+
+function showLoginPopup(email) {
+  if (loginToast && toastMsg) {
+    toastMsg.textContent = `Signed in as: ${email}`;
+    loginToast.show();
+  } else {
+    alert(`Signed in as: ${email}`);
+  }
+}
+
+// Session state listener
+let wasLoggedOut = true;
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // 1. Hide Login / Get Started
+    if (authNavButtons) {
+      authNavButtons.classList.add("d-none");
+      authNavButtons.classList.remove("d-flex");
+    }
+
+    // 2. Show User Email & Logout
+    if (userNavProfile) {
+      userNavProfile.classList.remove("d-none");
+      userNavProfile.classList.add("d-flex");
+    }
+
+    if (userEmailBadge) {
+      userEmailBadge.textContent = user.displayName || user.email;
+    }
+
+    // 3. Show popup on login
+    if (wasLoggedOut) {
+      showLoginPopup(user.email);
+      wasLoggedOut = false;
+    }
+  } else {
+    // Reset back to logged out UI
+    wasLoggedOut = true;
+
+    if (authNavButtons) {
+      authNavButtons.classList.remove("d-none");
+      authNavButtons.classList.add("d-flex");
+    }
+
+    if (userNavProfile) {
+      userNavProfile.classList.add("d-none");
+      userNavProfile.classList.remove("d-flex");
+    }
+  }
+});
+
+// Logout handler
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      alert("Logged out successfully.");
+    } catch (err) {
+      console.error("Sign out error:", err);
+    }
+  });
+}
+
 // Run verification check on page load
 checkEmailSignIn();
 
